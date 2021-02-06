@@ -1,0 +1,25 @@
+config:
+  target: "https://api.todoist.com"
+  phases:
+    - duration: 1
+      arrivalRate: 1
+      name: "Warm up"
+  defaults:
+    headers:
+      Authorization: Bearer {{ $processEnvironment.TOKEN }}
+      Content-Type: application/json
+##  processor: "./myProcessor.js" This may help if we want to use some kind of temporary token
+scenarios:
+  - flow:
+      - post:
+          url: "/rest/v1/projects"
+          json:
+            name: "Primera prueba"
+          capture:
+            json: "$.id"  
+            as: "id"
+      - log: "Mi id es {{ id }}"
+      - get:
+          url: "/rest/v1/projects/{{ id }}"
+      - delete:
+          url: "/rest/v1/projects/{{ id }}"
